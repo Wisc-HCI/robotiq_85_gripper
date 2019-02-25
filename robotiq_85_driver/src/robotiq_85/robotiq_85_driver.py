@@ -68,14 +68,14 @@ class Robotiq85Driver:
         if (self._num_grippers == 1):
             rospy.Subscriber("/gripper/cmd", GripperCmd, self._update_gripper_cmd, queue_size=10)
             self._gripper_pub = rospy.Publisher('/gripper/stat', GripperStat, queue_size=10)
-            self._gripper_joint_state_pub = rospy.Publisher('/gripper/joint_states', JointState, queue_size=10)
+            self._gripper_joint_state_pub = rospy.Publisher('/gripper/joint_state', JointState, queue_size=10)
         elif (self._num_grippers == 2):
             rospy.Subscriber("/left_gripper/cmd", GripperCmd, self._update_gripper_cmd, queue_size=10)
             self._left_gripper_pub = rospy.Publisher('/left_gripper/stat', GripperStat, queue_size=10)
-            self._left_gripper_joint_state_pub = rospy.Publisher('/left_gripper/joint_states', JointState, queue_size=10)
+            self._left_gripper_joint_state_pub = rospy.Publisher('/left_gripper/joint_state', JointState, queue_size=10)
             rospy.Subscriber("/right_gripper/cmd", GripperCmd, self._update_right_gripper_cmd, queue_size=10)
             self._right_gripper_pub = rospy.Publisher('/right_gripper/stat', GripperStat, queue_size=10)
-            self._right_gripper_joint_state_pub = rospy.Publisher('/right_gripper/joint_states', JointState, queue_size=10)
+            self._right_gripper_joint_state_pub = rospy.Publisher('/right_gripper/joint_state', JointState, queue_size=10)
         else:
             rospy.logerr("Number of grippers not supported (needs to be 1 or 2)")
             return
