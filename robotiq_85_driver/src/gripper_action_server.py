@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import roslib
 roslib.load_manifest('m1n6s_robotiq85_moveit_config')
 import rospy
@@ -11,6 +12,7 @@ from control_msgs.msg import GripperCommandAction, GripperCommandFeedback, Gripp
 LOWER_LIMIT = 0.0
 UPPER_LIMIT = 0.085
 
+GRIP_THRESHOLD = 0.01
 
 class GripperActionServer:
 
@@ -32,7 +34,7 @@ class GripperActionServer:
         result.position = self._stat.position
         result.effort = 0
         result.stalled = False
-        result.reached_goal = self._stat.position == goal
+        result.reached_goal = abs(self._stat.position - goal) < GRIP_THRESHOLD
         return result
 
     def _generate_feedback_msg(self, goal):
@@ -40,7 +42,7 @@ class GripperActionServer:
         feedback.position = self._stat.position
         feedback.effort = 0
         feedback.stalled = False
-        feedback.reached_goal = self._stat.position == goal
+        feedback.reached_goal = abs(self._stat.position - goal) < GRIP_THRESHOLD
         return feedback
 
     def _execute(self, goal):
@@ -50,18 +52,20 @@ class GripperActionServer:
 
         # check gripper is ready to accept commands
         if not self._stat.is_ready:
+            print 'Gripper reporting not ready'
             self._action_server.set_aborted(self._generate_result_msg(goalPosition))
             return
 
         # verify position is valid
         if goalPosition < LOWER_LIMIT or goalPosition > UPPER_LIMIT:
+            print 'Gripper position out of range'
             self._action_server.set_aborted(self._generate_result_msg(goalPosition))
             return
 
         # send gripper command
         cmd = GripperCmd()
         cmd.position = goalPosition
-        cmd.speed = 0.02
+        cmd.speed = 0.1
         cmd.force = 100.0
         self._cmdPub.publish(cmd)
         rospy.sleep(0.05)
@@ -86,6 +90,7 @@ class GripperActionServer:
         elif result.reached_goal:
             self._action_server.set_succeeded(result)
         else:
+            print goalPosition, '!=', self._stat.position
             self._action_server.set_aborted(result)
 
 if __name__ == "__main__":
