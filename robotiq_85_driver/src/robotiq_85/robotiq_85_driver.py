@@ -157,7 +157,7 @@ class Robotiq85Driver:
         js.header.frame_id = ''
         js.header.stamp = rospy.get_rostime()
         js.header.seq = self._seq[dev]
-        js.name = ['simple_gripper_robotiq_85_left_knuckle_joint']
+        js.name = ['robotiq_85_left_knuckle_joint']
         pos = np.clip(0.8 - ((0.8/0.085) * self._gripper.get_pos(dev)), 0., 0.8)
         js.position = [pos]
         dt = rospy.get_time() - self._prev_js_time[dev]
