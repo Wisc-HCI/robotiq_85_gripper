@@ -74,13 +74,16 @@ class GripperActionServer:
 
         self._stat = GripperStat()
 
-        self._action_server = actionlib.SimpleActionServer('gripper/gripper_command', GripperCommandAction, self._execute, False)
+        self._action_server = actionlib.SimpleActionServer('gripper_command', GripperCommandAction, self._execute, False)
         self._action_server.start()
 
     def _update_gripper_stat(self, stat):
         self._stat = stat
 
     def _generate_result_msg(self, goal):
+
+        print goal, 'vs', self._stat.position
+
         result = GripperCommandResult()
         result.position = self._stat.position
         result.effort = 0
@@ -117,7 +120,7 @@ class GripperActionServer:
         cmd.speed = self._speed
         cmd.force = 100.0
         self._cmdPub.publish(cmd)
-        rospy.sleep(self._loop_delay)
+        rospy.sleep(0.5)
 
         # move gripper
         preempted = False
