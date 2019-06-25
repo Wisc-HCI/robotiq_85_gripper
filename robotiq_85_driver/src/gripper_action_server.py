@@ -149,8 +149,10 @@ class GripperActionServer:
 
 if __name__ == "__main__":
     rospy.init_node('gripper_action_server')
+
     loop_rate = rospy.get_param('~loop_rate',LOOP_RATE)
     grip_threshold = rospy.get_param('~grip_threshold',GRIP_THRESHOLD)
     speed = rospy.get_param('~speed',SPEED)
+
     server = GripperActionServer(loop_rate,grip_threshold,speed)
     rospy.spin()
