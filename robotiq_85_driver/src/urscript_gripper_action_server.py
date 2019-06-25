@@ -39,6 +39,7 @@ import time
 import rospy
 import actionlib
 
+from sensor_msgs.msg import JointState
 from control_msgs.msg import GripperCommandAction, GripperCommandFeedback, GripperCommandResult
 
 
@@ -57,6 +58,7 @@ class URScriptGripperActionServer:
         self._speed = speed
         self._run_delay = run_delay
 
+        self._joint_state_pub = rospy.Publisher('/gripper/joint_states',JointState,queue_size=10)
         self._urscript_pub = rospy.Publisher(urscript_topic,String,queue_size=5)
         self._action_server = actionlib.SimpleActionServer('gripper_command', GripperCommandAction, self._execute, False)
         self._action_server.start()
@@ -64,6 +66,7 @@ class URScriptGripperActionServer:
     def _execute(self, goal):
 
         # verify parameters are valid
+        #TODO convert from goal in nominal scale to byte scale
         if not (0 <= goal.position <= 255):
             self._action_server.set_aborted(self._fail_res_msg())
             return
@@ -140,6 +143,15 @@ class URScriptGripperActionServer:
         script = script.replace('<speed>',str(speed))
         script = script.replace('<force>',str(force))
         return script
+
+    def loop(self):
+        #TODO publish actual gripper state
+        msg = JointState()
+        msg.name= ['robotiq_85_left_knuckle_joint']
+        msg.position = [0]
+        msg.velocity = [0]
+        msg.effort = [0]
+        self._joint_state_pub.Publish(msg)
 
 
 if __name__ == "__main__":
