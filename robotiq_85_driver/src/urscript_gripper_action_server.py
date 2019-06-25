@@ -21,6 +21,9 @@ Parameters:
     - ~run_delay
         "Used to provide a wait behavior since there is currently no feedback"
         default = 5
+    - ~joint_publish_rate
+        "Rate that joint state of gripper is published"
+        default = 0.25
 
 Actions:
     - /gripper/gripper_command
@@ -39,6 +42,7 @@ import time
 import rospy
 import actionlib
 
+from std_msgs.msg import String
 from sensor_msgs.msg import JointState
 from control_msgs.msg import GripperCommandAction, GripperCommandFeedback, GripperCommandResult
 
@@ -46,6 +50,7 @@ from control_msgs.msg import GripperCommandAction, GripperCommandFeedback, Gripp
 DEFAULT_SPEED = 255
 DEFAULT_URSCRIPT_TOPIC = '/ur_driver/URScript'
 DEFAULT_RUN_DELAY = 5
+DEFAULT_JOINT_PUBLISH_RATE = 0.25
 
 DELAY_TIMESTEP = 0.01
 
@@ -54,9 +59,10 @@ GRIPPER_FILE = os.path.join(os.path.realpath(__file__),'urscript/gripper_all_in_
 
 class URScriptGripperActionServer:
 
-    def __init__(self,speed,run_delay,urscript_topic):
+    def __init__(self,speed,run_delay,urscript_topic,joint_publish_rate):
         self._speed = speed
         self._run_delay = run_delay
+        self._joint_publish_rate = joint_publish_rate
 
         self._joint_state_pub = rospy.Publisher('/gripper/joint_states',JointState,queue_size=10)
         self._urscript_pub = rospy.Publisher(urscript_topic,String,queue_size=5)
@@ -145,19 +151,26 @@ class URScriptGripperActionServer:
         return script
 
     def loop(self):
-        #TODO publish actual gripper state
-        msg = JointState()
-        msg.name= ['robotiq_85_left_knuckle_joint']
-        msg.position = [0]
-        msg.velocity = [0]
-        msg.effort = [0]
-        self._joint_state_pub.Publish(msg)
+        while not rospy.is_shutdown():
+
+            #TODO publish actual gripper state
+            msg = JointState()
+            msg.name= ['robotiq_85_left_knuckle_joint']
+            msg.position = [0]
+            msg.velocity = [0]
+            msg.effort = [0]
+            self._joint_state_pub.Publish(msg)
+
+            rospy.sleep(self._joint_publish_rate)
 
 
 if __name__ == "__main__":
     rospy.init_node('urscript_gripper_action_server')
+    
     speed = rospy.get_param('~speed',DEFAULT_SPEED)
     urscript_topic = rospy.get_param('~urscript_topic',DEFAULT_URSCRIPT_TOPIC)
     run_delay = rospy.get_param('~run_delay',DEFAULT_RUN_DELAY)
-    server = URScriptGripperActionServer(speed,run_delay,urscript_topic)
-    rospy.spin()
+    joint_publish_rate = rospy.get_param('~joint_publish_rate',DEFAULT_JOINT_PUBLISH_RATE)
+
+    server = URScriptGripperActionServer(speed,run_delay,urscript_topic,joint_publish_rate)
+    server.loop()
