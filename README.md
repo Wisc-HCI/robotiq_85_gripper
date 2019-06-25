@@ -22,3 +22,17 @@ Why use this version?
 - provides a gripper_action_server to convert GripperCommandActions used by
 planning pipelines like MoveIt into driver specific messages.
 - Referenced by [Wisc-HCI/robot_configurations](https://github.com/Wisc-HCI/robot_configurations) repository.
+- Provides URScript-based gripper action server for use with UR robots with only embedded gripper connections
+
+## URScript Version
+The URScript driver was developed specifically for the UR3e robot in the lab.
+This driver provides basic gripper functionality without having to bringup the
+standard robotiq driver. However, it does require the ur_modern_driver to
+provide a URScript topic.
+
+Note: This driver is not complete. Work should be done to minimize script
+length and extend functionality.
+
+Note: The script used is based off the generated script for the robotiq urcap.
+Please install and use this cap where possible. The source provided here is only
+to provide the functionality for this driver and is not intended for general use.
