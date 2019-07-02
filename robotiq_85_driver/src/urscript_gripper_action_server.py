@@ -160,19 +160,19 @@ class URScriptGripperActionServer:
         return script
 
     @staticmethod
-    def position_to_joint_conv(self, position):
+    def position_to_joint_conv(position):
         return (0.85 / 255) * position
 
     @staticmethod
-    def joint_to_position_conv(self, joint):
+    def joint_to_position_conv(joint):
         return int((255 / 0.85) * joint)
 
     @staticmethod
-    def force_to_effort_conv(self, force):
+    def force_to_effort_conv(force):
         return (1.0 / 255) * force
 
     @staticmethod
-    def effort_to_force_conv(self, effort):
+    def effort_to_force_conv(effort):
         return int((255 / 1.0) * effort)
 
     def loop(self):
