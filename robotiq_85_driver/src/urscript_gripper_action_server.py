@@ -69,7 +69,7 @@ class URScriptGripperActionServer:
         self._grip_threshold = grip_threshold
         self._joint_publish_rate = joint_publish_rate
 
-        self._joint_state_pub = rospy.Publisher('/gripper/joint_states',JointState,queue_size=10)
+        self._joint_state_pub = rospy.Publisher('/gripper/joint_state',JointState,queue_size=10)
         self._urscript_pub = rospy.Publisher(urscript_topic,String,queue_size=5)
         self._action_server = actionlib.SimpleActionServer('gripper_command', GripperCommandAction, self._execute, False)
         self._action_server.start()
