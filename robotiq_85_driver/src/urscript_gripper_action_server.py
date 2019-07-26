@@ -92,6 +92,7 @@ class URScriptGripperActionServer:
             return
 
         # send script to UR driver
+        rospy.sleep(1)
         msg = String(self._gen_script(position=position_target,
                                       speed=self._speed,
                                       force=effort_target))
