@@ -53,7 +53,7 @@ from control_msgs.msg import GripperCommandAction, GripperCommandFeedback, Gripp
 DEFAULT_GRIP_THRESHOLD = 0.01
 DEFAULT_SPEED = 255
 DEFAULT_URSCRIPT_TOPIC = '/ur_driver/URScript'
-DEFAULT_RUN_DELAY = 4
+DEFAULT_RUN_DELAY = 2.5
 DEFAULT_JOINT_PUBLISH_RATE = 0.25
 
 DELAY_TIMESTEP = 0.01
