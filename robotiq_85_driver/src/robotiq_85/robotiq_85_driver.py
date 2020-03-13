@@ -58,6 +58,9 @@ class Robotiq85Driver:
         self._num_grippers = rospy.get_param('~num_grippers',1)
         self._comport = rospy.get_param('~comport','/dev/ttyUSB0')
         self._baud = rospy.get_param('~baud','115200')
+        self._command_time_threshold = rospy.get_param('~command_time_threshold',None)
+
+        self._last_time = rospy.Time.now()
 
         self._gripper = Robotiq85Gripper(self._num_grippers,self._comport,self._baud)
 
@@ -116,10 +119,15 @@ class Robotiq85Driver:
         if (True == cmd.stop):
             self._gripper.stop()
         else:
-            pos = self._clamp_cmd(cmd.position,0.0,0.085)
-            vel = self._clamp_cmd(cmd.speed,0.013,0.1)
-            force = self._clamp_cmd(cmd.force,5.0,220.0)
-            self._gripper.goto(dev=0,pos=pos,vel=vel,force=force)
+            current_time = rospy.Time.now()
+            time_diff = current_time - self._last_time
+            if self._command_time_threshold == None or time_diff > self._command_time_threshold:
+                self._last_time = current_time
+
+                pos = self._clamp_cmd(cmd.position,0.0,0.085)
+                vel = self._clamp_cmd(cmd.speed,0.013,0.1)
+                force = self._clamp_cmd(cmd.force,5.0,220.0)
+                self._gripper.goto(dev=0,pos=pos,vel=vel,force=force)
 
     def _update_right_gripper_cmd(self,cmd):
 
@@ -132,10 +140,15 @@ class Robotiq85Driver:
         if (True == cmd.stop):
             self._gripper.stop(dev=1)
         else:
-            pos = self._clamp_cmd(cmd.position,0.0,0.085)
-            vel = self._clamp_cmd(cmd.speed,0.013,0.1)
-            force = self._clamp_cmd(cmd.force,5.0,220.0)
-            self._gripper.goto(dev=1,pos=pos,vel=vel,force=force)
+            current_time = rospy.Time.now()
+            time_diff = current_time - self._last_time
+            if self._command_time_threshold == None or time_diff > self._command_time_threshold:
+                self._last_time = current_time
+
+                pos = self._clamp_cmd(cmd.position,0.0,0.085)
+                vel = self._clamp_cmd(cmd.speed,0.013,0.1)
+                force = self._clamp_cmd(cmd.force,5.0,220.0)
+                self._gripper.goto(dev=1,pos=pos,vel=vel,force=force)
 
     def _update_gripper_stat(self,dev=0):
         stat = GripperStat()
