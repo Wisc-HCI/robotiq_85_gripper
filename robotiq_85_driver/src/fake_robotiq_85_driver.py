@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from robotiq_85_gripper import Robotiq85Gripper
 from robotiq_85_msgs.msg import GripperCmd, GripperStat
 from sensor_msgs.msg import JointState
 import numpy as np
