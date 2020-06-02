@@ -36,7 +36,7 @@ class FakeDriver:
         stat.is_ready = self._driver_ready
         stat.is_reset = False
         stat.is_moving = False
-        stat.obj_detected = Flase
+        stat.obj_detected = False
         stat.fault_status = self._driver_state
         stat.position = position
         stat.requested_position = position
@@ -48,7 +48,7 @@ class FakeDriver:
         js = JointState()
         js.header.frame_id = ''
         js.header.stamp = rospy.get_rostime()
-        js.header.seq = self._seq[dev]
+        js.header.seq = self._seq
         js.name = ['robotiq_85_left_knuckle_joint']
         js.position = [position]
         dt = rospy.get_time() - self._prev_js_time
